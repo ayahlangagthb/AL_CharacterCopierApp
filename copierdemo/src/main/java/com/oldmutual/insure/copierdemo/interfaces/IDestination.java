@@ -4,5 +4,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface IDestination {
     void writeChar(char c);
-    void writeChars(String value);
+    void writeChars(char[] values);
 }
