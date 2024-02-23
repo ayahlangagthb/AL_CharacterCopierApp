@@ -10,8 +10,9 @@ import com.oldmutual.insure.copierdemo.interfaces.ISource;
 
 @Configuration
 public class AppConfig {
-
-	  @Bean
+	/*
+	 *  examples of configs for bean building
+	 */	  @Bean
 	    ISource simpleISource() {
 		  return new SimpleISource("Ayanda",0);   
 	       }

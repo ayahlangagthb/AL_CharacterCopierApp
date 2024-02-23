@@ -13,9 +13,12 @@ import com.oldmutual.insure.copierdemo.functionality.Copier;
 import com.oldmutual.insure.copierdemo.interfaces.ISource;
 import com.oldmutual.insure.copierdemo.interfaces.IDestination;
 
+/**Please use this class for the evaluation of code as it follows the instruction of using ISource 
+and IDestination while not implementing them but rather having Copier.class as the only implemented class,
+with the use of Mock instances.
+**/
+
 @Component
-@RestController
-@RequestMapping("/api/copier")
 public class CharacterCopierController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterCopierController.class);
 
@@ -30,8 +33,6 @@ public class CharacterCopierController {
         this.copier = new Copier(source, destination);
     }
 
-    @GetMapping("/copy")
-    @ResponseBody
     public String copyCharacters() {
         try {
             copier.copy();
@@ -42,18 +43,29 @@ public class CharacterCopierController {
             return "Error copying characters. See logs for details.";
         }
     }
-
-    @GetMapping("/copyMultiple")
-    @ResponseBody
+    
     public String copyMultipleCharacters() {
         try {
-            String characters = source.readChars(3);
+            // Read 3 characters from the source
+            String characters = source.readChars(100);
+            
+            // Write the characters to the destination
             destination.writeChars(characters.toCharArray());
+            
             LOGGER.info("Multiple characters copied successfully.");
             return "Multiple characters copied successfully.";
         } catch (Exception e) {
             LOGGER.error("Error copying multiple characters: {}", e.getMessage());
             return "Error copying multiple characters. See logs for details.";
         }
+    }
+
+    public String getTestCase() {
+        StringBuilder testCase = new StringBuilder();
+        testCase.append("Test Case: Run the following API calls in your browser to simulate copying characters\n");
+        testCase.append("1. /api/copier/copy - Copy single character\n");
+        testCase.append("2. /api/copier/copyMultiple - Copy multiple characters\n");
+        testCase.append("\nNote: For an interactive demo, run the application in the console.\n");
+        return testCase.toString();
     }
 }

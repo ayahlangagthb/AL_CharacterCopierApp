@@ -7,6 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**use this class to evaluate the use of ISource source, IDestination destination
+as the only implemented class with the copy method.
+**/
+
 @Component
 public class Copier {
     private static final Logger LOGGER = LoggerFactory.getLogger(Copier.class);

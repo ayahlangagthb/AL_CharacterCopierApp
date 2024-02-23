@@ -1,9 +1,11 @@
 package com.oldmutual.insure.copierdemo;
 
-import org.springframework.boot.CommandLineRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+
 import com.oldmutual.insure.copierdemo.controller.CharacterCopierController;
 import com.oldmutual.insure.copierdemo.functionality.Copier;
 import com.oldmutual.insure.copierdemo.interfaces.IDestination;
@@ -13,22 +15,21 @@ import java.util.Scanner;
 
 @SpringBootApplication
 @ComponentScan("com.oldmutual.insure.copierdemo")
-public class CopierdemoApplication implements CommandLineRunner {
+public class CopierdemoApplication {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CopierdemoApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(CopierdemoApplication.class, args);
-    }
 
-    @Override
-    public void run(String... args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Interactive Character Copier Demo");
-            System.out.println("=================================");
+            LOGGER.info("*******************************************************");
+            LOGGER.info("Interactive Character Copier Demo by Mr. AL [For O.M.I]");
+            LOGGER.info("*******************************************************");
 
             boolean exit = false;
 
             while (!exit) {
-                System.out.print("\nEnter characters to copy (Ctrl+D to finish, type 'exit' to exit): ");
+                LOGGER.info("Enter character to copy (type 'exit' to exit):");
                 String input = scanner.nextLine();
 
                 if ("exit".equalsIgnoreCase(input)) {
@@ -36,17 +37,20 @@ public class CopierdemoApplication implements CommandLineRunner {
                     continue;
                 }
 
-                ISource mockSource = createMockSource(input);
+                // Take only the first character
+                char singleCharInput = input.charAt(0);
+
+                ISource mockSource = createMockSource(String.valueOf(singleCharInput));
                 StringBuilder destinationContent = new StringBuilder();
                 IDestination mockDestination = createMockDestination(destinationContent);
 
                 Copier copier = new Copier(mockSource, mockDestination);
                 CharacterCopierController controller = new CharacterCopierController(mockSource, mockDestination);
-
-                System.out.println("\nCopying characters...");
+                LOGGER.warn("Copier functionality in use, please don't interrupt" + copier);
+                LOGGER.info("Copying characters...");
                 controller.copyCharacters();
-                System.out.println("Input: " + input);
-                System.out.println("Result in destination: " + destinationContent);
+                LOGGER.info("Input: " + singleCharInput);
+                LOGGER.info("Result in destination: " + destinationContent);
 
                 resetDestination(destinationContent);
 
@@ -56,19 +60,19 @@ public class CopierdemoApplication implements CommandLineRunner {
                 ISource mockSourceMultiple = createMockSource(multipleInput);
 
                 controller = new CharacterCopierController(mockSourceMultiple, mockDestination);
-                System.out.println("\nCopying multiple characters...");
+                LOGGER.info("Copying multiple characters...");
                 controller.copyMultipleCharacters();
-                System.out.println("Input: " + multipleInput);
-                System.out.println("Result in destination: " + destinationContent);
+                LOGGER.info("Input: " + multipleInput);
+                LOGGER.info("Result in destination: " + destinationContent);
 
                 resetDestination(destinationContent);
             }
 
-            System.out.println("\nExiting Interactive Character Copier Demo.");
+            LOGGER.info("Exiting Interactive Character Copier Demo.");
         }
     }
 
-    private ISource createMockSource(String input) {
+    private static ISource createMockSource(String input) {
         return new ISource() {
             private int currentIndex = 0;
 
@@ -91,7 +95,7 @@ public class CopierdemoApplication implements CommandLineRunner {
         };
     }
 
-    private IDestination createMockDestination(StringBuilder destinationContent) {
+    private static IDestination createMockDestination(StringBuilder destinationContent) {
         return new IDestination() {
             @Override
             public void writeChar(char c) {
@@ -109,13 +113,13 @@ public class CopierdemoApplication implements CommandLineRunner {
         };
     }
 
-    private String readMultipleCharacters(Scanner scanner) {
-        System.out.print("\nEnter characters to copy multiple (Ctrl+D to finish): ");
+    private static String readMultipleCharacters(Scanner scanner) {
+        LOGGER.info("Enter characters to copy multiple: ");
         return scanner.nextLine();
     }
 
-    private void resetDestination(StringBuilder destinationContent) {
+    private static void resetDestination(StringBuilder destinationContent) {
         destinationContent.setLength(0);
-        System.out.println("\nDestination content reset.");
+        LOGGER.info("Destination content reset.");
     }
 }
